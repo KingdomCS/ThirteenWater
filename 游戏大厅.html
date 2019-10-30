@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>游戏大厅</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/游戏大厅/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/游戏大厅/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+	    //token
+	  var token = localStorage.getItem("token");
+		//登出
+	  function logout(){
+		var data = null;
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", function ()
+        {
+            if (this.readyState === this.DONE) {
+                console.log(this.responseText);
+                var JsonObject = JSON.parse(this.responseText);
+                if (JsonObject.status == 0)
+                {
+                    alert("注销成功");
+                    window.location.href = '登录.html';
+                }else
+                    alert(JsonObject.status);
+            }
+        });
+
+        xhr.open("POST", "http://api.revth.com/auth/logout");
+        xhr.setRequestHeader("x-auth-token",token);
+        xhr.send(data);
+	  };
+	function openRankList(){window.location.href='排行榜.html';}
+		//开启战局
+	  function begin()
+	{
+//		var data = null;
+//        var xhr = new XMLHttpRequest();
+//        maxn = 0;
+//        xhr.addEventListener("readystatechange", function ()
+//        {
+//            if (this.readyState === this.DONE) {
+//			    console.log(this.responseText);
+//			    var JsonObject = JSON.parse(this.responseText);
+//
+//			    if(JsonObject.status==1004) alert("Token过期");
+//			    if(JsonObject.status==2001) alert("未结束战局过多");
+//				if(JsonObject.status == 5000 )
+//				{
+//					alert("请绑定教务处账号");
+//				}
+//			    if (JsonObject.status == 0)
+//			    {
+//					//var game_id= JsonObject.data.id;
+//					//var pre_card=JsonObject.data.card;
+//					localStorage.setItem("game_id",JsonObject.data.id);
+//					localStorage.setItem("pre_card",JsonObject.data.card);
+//					window.location.href='牌局.html';
+//                } 
+//			}
+//        });
+//
+//        xhr.open("POST", "http://api.revth.com/game/open");
+//        xhr.setRequestHeader("x-auth-token",token);
+//        xhr.send(data);
+		window.location.href='牌局.html';
+	};
+	  
+		//历史战绩
+	  function history(){
+		  window.location.href='历史战局.html';
+	  }
+		//排行榜
+	  function rank(){
+        var data = null;
+        var obj;
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange=function(){
+            if(xhr.readyState==4&&xhr.status==200){
+                
+				obj=JSON.parse(xhr.responseText);
+				var json=xhr.responseText;
+				var jsonlen=0;
+                
+                function getJsonLength(json)
+				{
+                    for (var x in json) 
+					{
+                        var y=jsonlen;
+                        var z=y+1;
+                        document.getElementById("table1").innerHTML+="<tr>"+"<td style='text-align:center;border:solid 2px #000;'>"+obj[y].player_id+ "</td><td style='text-align:center;border:solid 2px #000;'>"+obj[y].name+"</td><td style='text-align:center;border:solid 2px #000;'>"+obj[y].score+"</td>"+"</tr>";
+                        jsonlen++;
+                    } 
+                }
+                getJsonLength(json);
+            }
+        }
+        xhr.open("GET", "http://api.revth.com/rank",true);
+        xhr.send(data);
+	  }
+    </script>
+  </head>
+  <body>
+    <div id="base" class="">
+
+      <!-- 游戏大厅背景 (图片 ) -->
+      <div id="u31" class="ax_default image" data-label="游戏大厅背景">
+        <img id="u31_img" class="img " src="images/游戏大厅/游戏大厅背景_u31.png"/>
+        <div id="u31_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- 开启战局按钮 (组合) -->
+      <div id="u32" class="ax_default" data-label="开启战局按钮" data-left="217" data-top="220" data-width="356" data-height="104" onClick="begin()">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u33" class="ax_default image">
+          <img id="u33_img" class="img " src="images/注册/u26.png"/>
+          <div id="u33_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (矩形) -->
+        <div id="u34" class="ax_default label">
+          <div id="u34_div" class=""></div>
+          <div id="u34_text" class="text ">
+            <p><span>开启战局</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 历史战绩按钮 (组合) -->
+      <div id="u35" class="ax_default" data-label="历史战绩按钮" data-left="217" data-top="366" data-width="356" data-height="104" onClick="history()">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u36" class="ax_default image">
+          <img id="u36_img" class="img " src="images/注册/u26.png"/>
+          <div id="u36_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (矩形) -->
+        <div id="u37" class="ax_default label">
+          <div id="u37_div" class=""></div>
+          <div id="u37_text" class="text ">
+            <p><span>历史战绩</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 排行榜按钮 (组合) -->
+      <div id="u38" class="ax_default" data-label="排行榜按钮" data-left="217" data-top="518" data-width="356" data-height="104" onClick="openRankList()">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u39" class="ax_default image">
+          <img id="u39_img" class="img " src="images/注册/u26.png"/>
+          <div id="u39_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (矩形) -->
+        <div id="u40" class="ax_default label">
+          <div id="u40_div" class=""></div>
+          <div id="u40_text" class="text ">
+            <p><span>排行榜</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 注销登录按钮 (组合) -->
+      <div id="u41" class="ax_default" data-label="注销登录按钮" data-left="82" data-top="862" data-width="270" data-height="106" onClick="logout()">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u42" class="ax_default image">
+          <img id="u42_img" class="img " src="images/游戏大厅/u42.png"/>
+          <div id="u42_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (矩形) -->
+        <div id="u43" class="ax_default label">
+          <div id="u43_div" class=""></div>
+          <div id="u43_text" class="text ">
+            <p><span>注销登录</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 游戏规则按钮 (组合) -->
+      <div id="u44" class="ax_default" data-label="游戏规则按钮" data-left="217" data-top="672" data-width="356" data-height="104">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u45" class="ax_default image">
+          <img id="u45_img" class="img " src="images/注册/u26.png"/>
+          <div id="u45_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (矩形) -->
+        <div id="u46" class="ax_default label">
+          <div id="u46_div" class=""></div>
+          <div id="u46_text" class="text ">
+            <p><span>游戏规则</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>

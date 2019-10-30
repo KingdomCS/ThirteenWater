@@ -1,0 +1,598 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>牌局</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="files/牌局/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script src="resources/scripts/axure/axQuery.js"></script>
+    <script src="resources/scripts/axure/globals.js"></script>
+    <script src="resources/scripts/axutils.js"></script>
+    <script src="resources/scripts/axure/annotation.js"></script>
+    <script src="resources/scripts/axure/axQuery.std.js"></script>
+    <script src="resources/scripts/axure/doc.js"></script>
+    <script src="resources/scripts/messagecenter.js"></script>
+    <script src="resources/scripts/axure/events.js"></script>
+    <script src="resources/scripts/axure/recording.js"></script>
+    <script src="resources/scripts/axure/action.js"></script>
+    <script src="resources/scripts/axure/expr.js"></script>
+    <script src="resources/scripts/axure/geometry.js"></script>
+    <script src="resources/scripts/axure/flyout.js"></script>
+    <script src="resources/scripts/axure/model.js"></script>
+    <script src="resources/scripts/axure/repeater.js"></script>
+    <script src="resources/scripts/axure/sto.js"></script>
+    <script src="resources/scripts/axure/utils.temp.js"></script>
+    <script src="resources/scripts/axure/variables.js"></script>
+    <script src="resources/scripts/axure/drag.js"></script>
+    <script src="resources/scripts/axure/move.js"></script>
+    <script src="resources/scripts/axure/visibility.js"></script>
+    <script src="resources/scripts/axure/style.js"></script>
+    <script src="resources/scripts/axure/adaptive.js"></script>
+    <script src="resources/scripts/axure/tree.js"></script>
+    <script src="resources/scripts/axure/init.temp.js"></script>
+    <script src="resources/scripts/axure/legacy.js"></script>
+    <script src="resources/scripts/axure/viewer.js"></script>
+    <script src="resources/scripts/axure/math.js"></script>
+    <script src="resources/scripts/axure/jquery.nicescroll.min.js"></script>
+    <script src="data/document.js"></script>
+    <script src="files/牌局/data.js"></script>
+    <script type="text/javascript">
+      $axure.utils.getTransparentGifPath = function() { return 'resources/images/transparent.gif'; };
+      $axure.utils.getOtherPath = function() { return 'resources/Other.html'; };
+      $axure.utils.getReloadPath = function() { return 'resources/reload.html'; };
+	var token=localStorage.getItem("token");
+		//拿牌
+function start(){	
+	$.ajax({
+            url: "http://api.revth.com/game/open",
+            beforeSend: function(xhr) 
+			{
+                xhr.setRequestHeader("X-Auth-Token",token);
+            },
+            type: "post",
+            success: function (data) 
+			{
+				console.log(data);
+				console.log(token);
+				localStorage.setItem("cards",data.data.card);
+				localStorage.setItem("game_id",data.data.id);//战局ID
+				solution();
+            },
+			error: function (res) {
+				alert("无法进入游戏");
+				window.location.href = '游戏大厅.html';
+        	}
+        });
+};
+		//算牌
+function solution()
+{
+			var cards=localStorage.getItem("cards");
+			alert("获得卡片："+cards);
+			console.log(JSON.stringify({
+				"card":cards
+			}));
+	$.ajax({
+            url: "http://127.0.0.1:8090/getcards", //算法
+			data:{"card":cards},
+			header:{
+             "Content-Type": "application/x-www-form-urlencoded",
+           			},
+            type: "post",
+            success: function (data) {
+				var cardstring=data.card.toString();
+				alert(data.card)
+				localStorage.setItem("cardSolution",cardstring);
+				
+				//获取结果完毕
+				document.getElementById('player4').value ="Card: \n"+cardstring;
+            },
+			error: function (res) {
+				alert("自动打牌错误");
+				window.location.href = '游戏大厅.html';
+        	}
+	
+        });
+};
+		//发牌
+function postcard(){
+	
+	var id=localStorage.getItem("game_id");
+	//localStorage.setItem("detailid1",id);
+	var card2=localStorage.getItem("cardSolution");
+	var card3=card2.split(/[ ,]+/);
+	var card4=new Array(3);
+	card4[0]=card3[0]+' '+card3[1]+' '+card3[2];
+	card4[1]=card3[3]+' '+card3[4]+' '+card3[5]+' '+card3[6]+' '+card3[7];
+	card4[2]=card3[8]+' '+card3[9]+' '+card3[10]+' '+card3[11]+' '+card3[12];
+	console.log(card4);
+    id =Number(id);
+	$.ajax({
+            url: "http://api.revth.com/game/submit",
+			contentType:"application/json",
+		    data:JSON.stringify({
+				"id":id,
+				"card":card4
+			}),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-Auth-Token",token);
+            },
+            type: "post",
+            success: function (data) {
+				console.log(token);
+				console.log(data);
+				console.log(data.data.msg);
+				alert("成功出牌");
+				window.location.href = '游戏大厅.html';
+            },
+			error: function (res) {
+				alert("出牌失败");
+				window.location.href = '游戏大厅.html';
+        	}
+        });
+	
+}
+    </script>
+  </head>
+  <body onLoad="start()">
+    <div id="base" class="">
+
+      <!-- Unnamed (图片 ) -->
+      <div id="u0" class="ax_default image">
+        <img id="u0_img" class="img " src="images/牌局/regen/u0.png"/>
+        <div id="u0_text" class="text " style="display:none; visibility: hidden">
+          <p></p>
+        </div>
+      </div>
+
+      <!-- 玩家3牌群 (组合) -->
+      <div id="u1" class="ax_default" data-label="玩家3牌群" data-left="1092.5" data-top="384.5" data-width="285" data-height="320">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u2" class="ax_default image">
+          <img id="u2_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u2_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u3" class="ax_default image">
+          <img id="u3_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u3_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u4" class="ax_default image">
+          <img id="u4_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u4_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u5" class="ax_default image">
+          <img id="u5_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u5_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u6" class="ax_default image">
+          <img id="u6_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u6_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u7" class="ax_default image">
+          <img id="u7_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u7_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u8" class="ax_default image">
+          <img id="u8_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u8_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u9" class="ax_default image">
+          <img id="u9_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u9_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u10" class="ax_default image">
+          <img id="u10_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u10_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u11" class="ax_default image">
+          <img id="u11_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u11_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u12" class="ax_default image">
+          <img id="u12_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u12_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u13" class="ax_default image">
+          <img id="u13_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u13_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u14" class="ax_default image">
+          <img id="u14_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u14_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 玩家2牌群 (组合) -->
+      <div id="u15" class="ax_default" data-label="玩家2牌群" data-left="103.5" data-top="384.5" data-width="285" data-height="320">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u16" class="ax_default image">
+          <img id="u16_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u16_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u17" class="ax_default image">
+          <img id="u17_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u17_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u18" class="ax_default image">
+          <img id="u18_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u18_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u19" class="ax_default image">
+          <img id="u19_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u19_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u20" class="ax_default image">
+          <img id="u20_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u20_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u21" class="ax_default image">
+          <img id="u21_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u21_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u22" class="ax_default image">
+          <img id="u22_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u22_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u23" class="ax_default image">
+          <img id="u23_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u23_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u24" class="ax_default image">
+          <img id="u24_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u24_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u25" class="ax_default image">
+          <img id="u25_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u25_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u26" class="ax_default image">
+          <img id="u26_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u26_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u27" class="ax_default image">
+          <img id="u27_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u27_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u28" class="ax_default image">
+          <img id="u28_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u28_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 玩家1牌群 (组合) -->
+      <div id="u29" class="ax_default" data-label="玩家1牌群" data-left="560" data-top="62" data-width="320" data-height="285">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u30" class="ax_default image">
+          <img id="u30_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u30_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u31" class="ax_default image">
+          <img id="u31_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u31_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u32" class="ax_default image">
+          <img id="u32_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u32_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u33" class="ax_default image">
+          <img id="u33_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u33_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u34" class="ax_default image">
+          <img id="u34_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u34_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u35" class="ax_default image">
+          <img id="u35_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u35_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u36" class="ax_default image">
+          <img id="u36_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u36_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u37" class="ax_default image">
+          <img id="u37_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u37_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u38" class="ax_default image">
+          <img id="u38_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u38_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u39" class="ax_default image">
+          <img id="u39_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u39_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u40" class="ax_default image">
+          <img id="u40_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u40_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u41" class="ax_default image">
+          <img id="u41_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u41_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u42" class="ax_default image">
+          <img id="u42_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u42_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unnamed (矩形) -->
+      <div id="u43" class="ax_default button" onClick="postcard()">
+        <div id="u43_div" class=""></div>
+        <div id="u43_text" class="text ">
+          <p><span>出牌</span></p>
+        </div>
+      </div>
+
+		<!-- 玩家4 -->
+		<div style="margin-left: 580px; margin-top: 780px;  overflow-x: auto; height: 200px; width: 305px; border: solid 6px #FFC0CB; position: absolute; z-index: 1;opacity:0.8;">
+			 <textarea id="player4" rows="15" cols="40" style="font-size:28px;font-weight: bold;color:#FFC0CB" disabled="disabled">
+		</textarea>
+	</div>
+      <!-- 玩家4自身牌群 (组合) -->
+      <div id="u44" class="ax_default" data-label="玩家4自身牌群" data-left="576" data-top="693" data-width="320" data-height="285">
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u45" class="ax_default image">
+          <img id="u45_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u45_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u46" class="ax_default image">
+          <img id="u46_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u46_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u47" class="ax_default image">
+          <img id="u47_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u47_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u48" class="ax_default image">
+          <img id="u48_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u48_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u49" class="ax_default image">
+          <img id="u49_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u49_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u50" class="ax_default image">
+          <img id="u50_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u50_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u51" class="ax_default image">
+          <img id="u51_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u51_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u52" class="ax_default image">
+          <img id="u52_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u52_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u53" class="ax_default image">
+          <img id="u53_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u53_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u54" class="ax_default image">
+          <img id="u54_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u54_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u55" class="ax_default image">
+          <img id="u55_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u55_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u56" class="ax_default image">
+          <img id="u56_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u56_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+
+        <!-- Unnamed (图片 ) -->
+        <div id="u57" class="ax_default image">
+          <img id="u57_img" class="img " src="images/牌局/regen/u2.png"/>
+          <div id="u57_text" class="text " style="display:none; visibility: hidden">
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="resources/scripts/axure/ios.js"></script>
+  </body>
+</html>
