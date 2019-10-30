@@ -1,6 +1,9 @@
 # ThirteenWater
 ## 徽章
-![](https://img.shields.io/badge/language-python-blue.svg)
+
+![语言](https://img.shields.io/badge/language-python-blue.svg)
+![代码质量](https://img.shields.io/badge/CodeQuality-A-black.svg)
+
 ## 运行环境
 Windows10 python3.6及以上(需要通过pip安装virtualenv和flask)
 给出链接https://blog.csdn.net/qq_37383968/article/details/86466155?tdsourcetag=s_pctim_aiomsg
